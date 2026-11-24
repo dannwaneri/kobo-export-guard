@@ -4,3 +4,5 @@ dist/
 .env.local
 .env*.local
 dev-data/
+DEVPOST_DRAFT.md
+DEFT_PROMPT.md

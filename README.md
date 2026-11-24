@@ -6,7 +6,7 @@ Clean a Kobo/ODK survey export before you share it. The file stays in your brows
 
 ## The problem
 An NGO monitoring and evaluation officer described his team's practice to us (shared with his permission):
-- Raw Kobo exports go to government, donors and partners "more often than our data protection policy says".
+- Raw Kobo exports go to government, donors and partners "more often than what our data protection policy says it should".
 - Cleaning is done by hand: staff delete the obvious columns.
 - What still leaks:
   - the comments column ("…contact [name] at 07…");
