@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Judge Path</title>
+  <link rel="stylesheet" href="/src/ui/style.css" />
+</head>
+<body>
+  <header class="top"><div><h1>Judge path · 3 minutes</h1><p class="sub">No account, no key. The data is synthetic: 40 made-up households.</p></div></header>
+  <main>
+    <section class="panel">
+      <h2><span class="n">1</span> The normal run (desktop Chrome with Gemini Nano)</h2>
+      <p><a class="btn" href="/?sample=1">Open the app with the sample loaded</a></p>
+      <ol>
+        <li>Step 2 shows each column and the rule that decided it: metadata such as <code>username</code>, <code>deviceid</code>, <code>_submission_time</code> is dropped; names, phones and household IDs are dropped; GPS is rounded.</li>
+        <li>Step 3: press <b>Scan with Gemini Nano on this device</b>. Names and places in the comments are found in the browser; phones by code.</li>
+        <li>Step 4: review the masks. Step 5: download the cleaned CSV and the receipt.</li>
+        <li>Watch the <b>AI requests sent</b> counter in the header: it stays at <b>0</b> through the scan.</li>
+      </ol>
+    </section>
+    <section class="panel">
+      <h2><span class="n">2</span> The refusal (a browser without the built-in model)</h2>
+      <p><a class="btn ghost" href="/?sample=1&amp;nonano">Open the app as if Nano were missing</a></p>
+      <p>This removes <code>LanguageModel</code> before the page runs, like Firefox, Safari or a phone. In that case the Firebase AI Logic SDK (13.4.0) sends even <code>ONLY_ON_DEVICE</code> calls to the cloud. This app checks first and refuses: the scan button is disabled, the code-only scan still works, and the counter stays at <b>0</b>.</p>
+    </section>
+    <section class="panel">
+      <h2><span class="n">3</span> The one cloud call</h2>
+      <p>Step 6 sends only the <b>cleaned</b> comments to Gemini in the cloud for a narrative summary, after consent and a final code check that no phone, email or masked name remains. The counter then shows exactly one request.</p>
+    </section>
+    <section class="panel">
+      <h2>Why this exists</h2>
+      <p class="hint">An NGO data officer told us: raw Kobo exports go to partners “more often than our data protection policy says”; cleaning is done by hand; the comments column, half-cleaned GPS and forgotten metadata are what leak; and staff paste comment rows into chatbots to write reports.</p>
+    </section>
+  </main>
+  <footer><a href="/">Back to the app</a></footer>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kobo Export Guard</title>
+  <link rel="stylesheet" href="/src/ui/style.css" />
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>Kobo Export Guard</h1>
+      <p class="sub">Clean a Kobo/ODK export before you share it. The file stays in this browser.</p>
+    </div>
+    <div class="chips">
+      <span id="chip-device" class="chip">Checking device…</span>
+      <button id="chip-meter" class="chip meter" title="Every request this page made to Google's AI endpoints">AI requests sent: 0</button>
+    </div>
+  </header>
+  <section id="meter-log" class="panel hidden"><h3>Requests this page sent to Google AI endpoints</h3><ol id="meter-list"></ol><p class="hint">Counted by wrapping <code>fetch</code> before Firebase loads. Raw survey text is never sent: only the optional cloud summary of cleaned text appears here.</p></section>
+
+  <main>
+    <section class="panel" id="s1">
+      <h2><span class="n">1</span> Open an export</h2>
+      <div class="row">
+        <label class="btn"><input type="file" id="file" accept=".csv,text/csv" hidden />Choose a CSV export</label>
+        <button id="load-sample" class="btn ghost">Use the synthetic sample (40 households)</button>
+      </div>
+      <p class="hint">CSV from Kobo (“Download data → CSV”). Nothing is uploaded. The sample is made up: no real people.</p>
+      <p id="file-info" class="info"></p>
+    </section>
+
+    <section class="panel hidden" id="s2">
+      <h2><span class="n">2</span> Columns <small>decided by rules in code — change any of them</small></h2>
+      <div class="row opts">
+        <label>GPS precision <select id="gps-dec"><option value="1">1 decimal (~11 km)</option><option value="2" selected>2 decimals (~1.1 km)</option><option value="3">3 decimals (~110 m)</option></select></label>
+        <label>Small-group size k <input id="k" type="number" min="2" max="50" value="5" /></label>
+      </div>
+      <div class="tablewrap"><table id="cols"><thead><tr><th>Column</th><th>Example value</th><th>Action</th><th>Why</th><th title="Used for the small-group check">Quasi-ID</th></tr></thead><tbody></tbody></table></div>
+    </section>
+
+    <section class="panel hidden" id="s3">
+      <h2><span class="n">3</span> Scan free text</h2>
+      <p id="gate-msg" class="info"></p>
+      <div class="row">
+        <button id="get-model" class="btn ghost hidden">Get the model (on this device)</button>
+        <button id="scan" class="btn">Scan with Gemini Nano on this device</button>
+        <button id="scan-code" class="btn ghost">Code-only scan (phones, emails, coordinates)</button>
+      </div>
+      <p class="hint">Phones, emails and coordinates are found by code. Names and places are found by Gemini Nano running in this browser; before each call the app checks the model is really here, and refuses otherwise.</p>
+      <div id="progress" class="info"></div>
+    </section>
+
+    <section class="panel hidden" id="s4">
+      <h2><span class="n">4</span> Review <small>flagged rows first</small></h2>
+      <div id="review"></div>
+    </section>
+
+    <section class="panel hidden" id="s5">
+      <h2><span class="n">5</span> Export</h2>
+      <div class="row"><button id="dl-csv" class="btn">Download cleaned CSV</button><button id="dl-receipt" class="btn ghost">Download receipt</button></div>
+      <pre id="receipt"></pre>
+    </section>
+
+    <section class="panel hidden" id="s6">
+      <h2><span class="n">6</span> Optional: narrative summary in the cloud</h2>
+      <p class="hint">Instead of pasting rows into a chatbot. Only the <b>cleaned</b> comments below are sent to Gemini in the cloud, after a final code check.</p>
+      <details><summary>Exact text that would be sent</summary><pre id="payload"></pre></details>
+      <label class="consent"><input type="checkbox" id="consent" /> I have reviewed the cleaned text and agree to send it to Gemini (Google) for a summary.</label>
+      <div class="row"><button id="summarise" class="btn" disabled>Send cleaned text and summarise</button></div>
+      <pre id="summary"></pre>
+    </section>
+  </main>
+  <footer>Built for #BuildHybridAI 2026 with Firebase AI Logic. <a href="/judge.html">Judge path (3 min)</a></footer>
+  <script type="module" src="/src/ui/main.ts"></script>
+</body>
+</html>
