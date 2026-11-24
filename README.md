@@ -42,7 +42,7 @@ Try it: `/?sample=1&nonano` removes `LanguageModel` before the page runs. The Na
 The cloud summary is also refused unless every comment was checked by Nano, because names are only found on the device.
 
 ## Measured on the build laptop (i5-1135G7, Chrome 157, Nano v3)
-- 40-row synthetic export: 37 comments read on the device, about **10.6 s each**; **0** requests to Google AI endpoints during the scan.
+- 40-row synthetic export: 37 comments read on the device, about **9.5 s each** (about 20 s each when the laptop had only 2 GB RAM free); **0** requests to Google AI endpoints during the scan; then exactly **1** request (2.9 KB of cleaned text) for the summary, on the live site with App Check (Fraud Defense) enforced.
 - All names and phone numbers in the sample were masked.
 - Over-masking seen and fixed in code: "well", "river", "Jerrycans" (stoplist + places must be proper nouns or facilities).
 - Sensitive-situation flags are noisy (e.g. a latrine note tagged as a complaint about officials). They only order the review; they never decide anything.
