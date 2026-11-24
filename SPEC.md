@@ -2,7 +2,7 @@
 
 Entry for #BuildHybridAI 2026. Deadline 2026-11-30 23:00 WAT (14:00 PT).
 
-## The problem (source: an NGO M&E officer, 2026-11-24; permission to quote him publicly is still to be confirmed)
+## The problem (source: an NGO M&E officer, 2026-11-24; he agreed to be quoted, anonymously)
 - Raw Kobo/ODK exports (Excel/CSV) go to government, donors and partners, often unedited.
 - Cleaning is manual: staff delete the obvious columns (name, phone, household ID).
 - Leaks that remain:

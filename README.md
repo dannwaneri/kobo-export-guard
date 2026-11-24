@@ -15,7 +15,11 @@ An NGO monitoring and evaluation officer described his team's practice to us (sh
   - unreviewed photos.
 - Staff paste comment rows into chatbots to write narrative reports.
 
-His request: *a tool that detects phone numbers, names and coordinates in free text columns before it's sent.*
+In his words (quoted with his permission; he asked that we keep it general):
+
+> "We have seen many people pasting multiple rows of comments to generate a summary in order to use them in narrative reports … it is just that it is fast and that people don't know of other tools that do it in a secure way."
+
+> "If you can make a tool that detects phone numbers, names and coordinates in free text columns and before it's sent, we will definitely be using it here."
 
 ## What it does
 1. **Open** a CSV export. Nothing uploads.
