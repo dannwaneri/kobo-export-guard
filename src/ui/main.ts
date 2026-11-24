@@ -129,7 +129,7 @@ async function runScan(useModel: boolean) {
     }
   }
   if (modelOn) prog.textContent = `Done: ${jobs.length} cells, ${modelCalls} read by Gemini Nano on this device (${(modelMs / Math.max(1, modelCalls) / 1000).toFixed(1)} s each). Raw text sent to the cloud: none.`;
-  else if (!prog.textContent.startsWith("Refused") && !prog.textContent.startsWith("Stopped")) prog.textContent = `Done: ${jobs.length} cells, code only. Names and places were not checked.`;
+  else if (!prog.textContent.startsWith("Refused") && !prog.textContent.startsWith("Stopped")) prog.textContent = `Done: ${jobs.length} cells, code only. Gemini Nano did not check names and places; only the code net (a capitalised word after "call", "with", "Mr" …) ran.`;
   for (const c of cols) st.results[c] = propagate(st.results[c]);
   buttons.forEach((b) => (b.disabled = false));
   await refreshGate();

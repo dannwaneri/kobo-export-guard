@@ -66,7 +66,7 @@ export function cleanExport(
 
   const residualRisk: string[] = [];
   if (plan.some((p) => p.action === "scan-text") && Object.values(results).every((col) => col.every((r) => !r?.usedModel))) {
-    residualRisk.push("Free text was cleaned by code only (phones, emails, coordinates). Names and places in free text were NOT checked.");
+    residualRisk.push("Free text was cleaned by code only (phones, emails, coordinates, and names right after words like 'call' or 'Mr'). Other names and places in free text were NOT checked by the model.");
   }
   const groups = smallGroups(out, opt.quasi.filter((q) => outHeaders.includes(q)), opt.k);
   if (groups.length) residualRisk.push(`${groups.length} group(s) of fewer than ${opt.k} rows share the same ${opt.quasi.join(" + ")}; such rows may still identify a household.`);
