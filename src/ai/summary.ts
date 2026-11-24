@@ -1,11 +1,12 @@
 // Optional cloud step: a narrative summary of CLEANED comments only — the safe stand-in for pasting rows into ChatGPT.
 import { getGenerativeModel, InferenceMode } from "firebase/ai";
-import { getAi, CLOUD_MODEL } from "./firebase";
+import { getAi } from "./firebase";
 import { setPurpose } from "./meter";
+import { cloudModels } from "./config";
 import { cloudSafe } from "../core/pipeline";
 
-// One fallback model, tried once, only when the first answers with a server error (seen live: 500 "high demand").
-const FALLBACK_MODEL = "gemini-3.5-flash";
+// Model names come from Remote Config (defaults in config.ts). The fallback is tried once, only when the
+// first model answers with a server error (seen live: 500 "high demand").
 
 export function buildSummaryPayload(cleanedComments: string[]): string {
   const lines = cleanedComments.map((c) => c.trim()).filter(Boolean).slice(0, 400);
@@ -29,12 +30,13 @@ async function ask(model: string, payload: string): Promise<string> {
 export async function cloudSummary(payload: string, maskedOriginals: string[]): Promise<string> {
   const check = cloudSafe(payload, maskedOriginals);
   if (!check.ok) throw new Error(`Not sent: the text still contains ${check.problems.join(", ")}.`);
+  const models = await cloudModels();
   try {
-    return await ask(CLOUD_MODEL, payload);
+    return await ask(models.primary, payload);
   } catch (e) {
     if (!serverError(e)) throw e;
     try {
-      return await ask(FALLBACK_MODEL, payload);
+      return await ask(models.fallback, payload);
     } catch (e2) {
       if (serverError(e2)) throw new Error("Gemini in the cloud is busy right now (server error on both models). Your cleaned file is ready; try the summary again later.");
       throw e2;

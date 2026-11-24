@@ -1,0 +1,14 @@
+{
+  "parameters": {
+    "cloud_model": {
+      "defaultValue": { "value": "gemini-3.5-flash-lite" },
+      "description": "Gemini model for the cloud summary of CLEANED comments",
+      "valueType": "STRING"
+    },
+    "cloud_fallback_model": {
+      "defaultValue": { "value": "gemini-3.5-flash" },
+      "description": "Tried once if cloud_model answers with a server error",
+      "valueType": "STRING"
+    }
+  }
+}

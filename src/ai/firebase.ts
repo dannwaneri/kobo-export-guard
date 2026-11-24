@@ -12,6 +12,12 @@ export function firebaseConfigured(): boolean {
   return Boolean(env.VITE_FB_API_KEY && env.VITE_FB_PROJECT_ID && env.VITE_FB_APP_ID);
 }
 
+/** The Firebase app (created with App Check on first use). */
+export function getAppInstance(): FirebaseApp {
+  if (!app) getAi();
+  return app!;
+}
+
 /** One Firebase app with App Check (Fraud Defense). On localhost a registered debug token is used. */
 export function getAi(): AI {
   if (ai) return ai;

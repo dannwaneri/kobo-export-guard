@@ -36,7 +36,7 @@ In his words (quoted with his permission):
 |---|---|---|
 | Names/places in raw comments | Gemini Nano, `InferenceMode.ONLY_ON_DEVICE`, **behind our own gate** | Raw survey text must not leave the device |
 | Phones, emails, coordinates, metadata, GPS, small-group check | Code | Deterministic and testable; no model needed |
-| Narrative summary | Gemini in the cloud (`gemini-3.5-flash-lite`, `ONLY_IN_CLOUD`) | Long output; the input is already cleaned |
+| Narrative summary | Gemini in the cloud (`ONLY_IN_CLOUD`; model from **Remote Config**, default `gemini-3.5-flash-lite`, one fallback `gemini-3.5-flash` on a server error) | Long output; the input is already cleaned |
 
 ### The gate (why ONLY_ON_DEVICE is not enough)
 In firebase 13.4.0, if the browser has **no** `LanguageModel` (Firefox, Safari, Chrome on phones, older Chrome), the SDK makes no Chrome adapter and sends the call to the cloud **whatever the mode**. `initializeDeviceModel()` also returns without error in that case. So before every on-device call, this app checks `LanguageModel.availability()` itself and refuses unless the result is `available` (`src/ai/gate.ts`). After the call it also checks `inferenceSource === ON_DEVICE`.
@@ -44,6 +44,12 @@ In firebase 13.4.0, if the browser has **no** `LanguageModel` (Firefox, Safari, 
 Try it: `/?sample=1&nonano` removes `LanguageModel` before the page runs. The Nano scan is disabled, the code-only scan still works, and the request counter stays at 0.
 
 The cloud summary is also refused unless every comment was checked by Nano, because names are only found on the device.
+
+## Firebase products used
+- **Firebase AI Logic**: hybrid inference (`ONLY_ON_DEVICE` behind our gate for raw text, `ONLY_IN_CLOUD` for the cleaned summary).
+- **App Check**: reCAPTCHA Enterprise (Fraud Defense), enforced on AI Logic; calls without a token get 401.
+- **Remote Config**: cloud model and fallback names (`remoteconfig.template.json`), so a busy model can be swapped without a redeploy.
+- **Hosting**: the live site and `/judge`.
 
 ## Measured on the build laptop (i5-1135G7, Chrome 157, Nano v3)
 - 40-row synthetic export: 37 comments read on the device, about **9.5 s each** (about 20 s each when the laptop had only 2 GB RAM free); **0** requests to Google AI endpoints during the scan; then exactly **1** request (2.9 KB of cleaned text) for the summary, on the live site with App Check (Fraud Defense) enforced.
