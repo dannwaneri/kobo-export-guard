@@ -1,8 +1,24 @@
 # Kobo Export Guard
 
+![Kobo Export Guard: call [NAME] on [PHONE] to book a revisit; Gemini Nano on this device; AI requests sent: 0](docs/images/hero.png)
+
 Clean a Kobo/ODK survey export before you share it. The file stays in your browser. Names and places in free-text comments are found by **Gemini Nano on your own device**. Phone numbers, metadata and GPS are handled by plain code. The only cloud call is an optional summary of the **already cleaned** comments.
 
 **Judges: open `/judge.html`** (3 minutes, no account, synthetic data).
+
+## Screenshots
+All data in these screenshots is synthetic (the 40-household sample in `public/sample/`).
+
+| | |
+|---|---|
+| ![Review](docs/images/01-review.png) | ![Summary on device](docs/images/02-summary-on-device.png) |
+| Review: names, places and phone numbers in the comments are masked before export. Rows with sensitive situations come first. | The summary of cleaned comments, written by Gemini Nano on this device in 34.6 s. Nothing was sent. |
+| ![Scan done](docs/images/03-scan-done.png) | ![Refusal](docs/images/04-refusal.png) |
+| 37 comments read by Gemini Nano on this device, about 9 s each. Raw text sent to the cloud: none. | Without Chrome's built-in model, the app refuses the AI scan and sends nothing. Code-only cleaning still runs. |
+| ![App top](docs/images/05-app-top.png) | ![Columns](docs/images/06-columns.png) |
+| Gemini Nano is ready on this device, and the counter shows 0 requests to Google AI. The file never leaves the browser. | Code, not AI, proposes an action for each column: drop metadata and IDs, round GPS, scan free text. Every choice can be changed. |
+| ![Receipt](docs/images/07-receipt.png) | ![Judge path](docs/images/08-judge.png) |
+| The receipt lists what was removed, what is still at risk, and every request the page sent to Google AI. | A 3-minute judge path: no account and synthetic data, plus the refusal and the hybrid summary. |
 
 ## The problem
 An NGO monitoring and evaluation officer described his team's practice to us (shared with his permission):
