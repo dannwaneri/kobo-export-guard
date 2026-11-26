@@ -60,6 +60,14 @@ The cloud summary is also refused unless every comment was checked by Nano, beca
 - Sensitive-situation flags are noisy (e.g. a latrine note tagged as a complaint about officials). They only order the review; they never decide anything.
 - Earlier tests (5 sanitized real-style remarks from the NGO officer): phone 1/1 by code; names and places found; role words such as "husband" removed by code.
 
+## Test matrix (what ran where)
+| Browser / device | Built-in model | Result |
+|---|---|---|
+| Chrome 157, desktop Windows (i5-1135G7, 16 GB) | Gemini Nano (v3), available | 40-row sample: 37 comments read on the device, about 9 s each; 0 requests to Google AI during the scan; cloud summary of cleaned text: 1 request (2 when the first model was busy) |
+| Chrome 157 with `LanguageModel` removed before the page runs (`?nonano`, also via Playwright) | missing | Scan refused; code-only cleaning ran; 0 requests |
+| **Firefox, desktop Windows (real browser, 2026-11-26)** | missing | Page shows "No built-in model in this browser"; free-text name scan off; 0 requests |
+| Phones (Android/iOS browsers) | not tested | Chrome's Prompt API is desktop-only, so the name scan would be refused there; code-only cleaning should still run (not measured) |
+
 ## Limits
 - Desktop Chrome with Gemini Nano only, for the name scan. Elsewhere the code-only cleaning still runs, and the app says that names were not checked.
 - About 10 s per comment on this laptop: 300 comments is roughly 50 minutes.
