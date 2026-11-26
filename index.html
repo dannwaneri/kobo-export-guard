@@ -63,12 +63,12 @@
     </section>
 
     <section class="panel hidden" id="s6">
-      <h2><span class="n">6</span> Optional: narrative summary in the cloud</h2>
-      <p class="hint">Instead of pasting rows into a chatbot. Only the <b>cleaned</b> comments below are sent to Gemini in the cloud, after a final code check.</p>
+      <h2><span class="n">6</span> Optional: summary of the cleaned comments</h2>
+      <p class="hint">Instead of pasting rows into a chatbot. Only the <b>cleaned</b> comments below are used, after a final code check. Gemini Nano writes the summary on this device when it is ready; otherwise the cleaned text goes to Gemini in the cloud. Raw comments never take this path.</p>
       <p id="model-info" class="hint"></p>
       <details><summary>Exact text that would be sent</summary><pre id="payload"></pre></details>
-      <label class="consent"><input type="checkbox" id="consent" /> I have reviewed the cleaned text and agree to send it to Gemini (Google) for a summary.</label>
-      <div class="row"><button id="summarise" class="btn" disabled>Send cleaned text and summarise</button></div>
+      <label class="consent"><input type="checkbox" id="consent" /> I have reviewed the cleaned text. If this device cannot write the summary, I agree to send the cleaned text to Gemini (Google) in the cloud.</label>
+      <div class="row"><button id="summarise" class="btn" disabled>Summarise the cleaned comments</button></div>
       <pre id="summary"></pre>
     </section>
   </main>

@@ -15,7 +15,7 @@ import { classifyTable, baseName, type ColumnPlan, type Action } from "../core/c
 import { cleanExport, toCsv, type TextResult, type Receipt } from "../core/pipeline";
 import { deviceState, DeviceRefused, GATE_COPY, type GateState } from "../ai/gate";
 import { deviceScan, codeScan, prepareDevice, propagate, type ScanResult } from "../ai/scan";
-import { buildSummaryPayload, cloudSummary } from "../ai/summary";
+import { buildSummaryPayload, summarise } from "../ai/summary";
 import { firebaseConfigured } from "../ai/firebase";
 import { cloudConfig } from "../ai/config";
 
@@ -213,7 +213,7 @@ $("dl-csv").onclick = () => { rebuild(); st?.cleaned && download(st.name.replace
 $("dl-receipt").onclick = () => { rebuild(); st?.cleaned && download("receipt.txt", $("receipt").textContent ?? "", "text/plain"); };
 ["gps-dec", "k"].forEach((id) => $(id).addEventListener("change", rebuild));
 
-// ---------- step 6: cloud summary ----------
+// ---------- step 6: summary (hybrid: on this device if Nano is ready, else in the cloud) ----------
 $("consent").addEventListener("change", (e) => (($("summarise") as HTMLButtonElement).disabled = !(e.target as HTMLInputElement).checked || !firebaseConfigured()));
 $("summarise").onclick = async () => {
   if (!st) return;
@@ -226,9 +226,13 @@ $("summarise").onclick = async () => {
     return;
   }
   const originals = Object.values(st.results).flatMap((col) => col.flatMap((r) => r?.spans.map((s) => s.text) ?? []));
-  $("summary").textContent = "Sending cleaned text…";
-  try { $("summary").textContent = await cloudSummary($("payload").textContent ?? "", originals); }
-  catch (e) { $("summary").textContent = (e as Error).message; }
+  $("summary").textContent = "Writing the summary… (on this device this takes about a minute)";
+  try {
+    const r = await summarise($("payload").textContent ?? "", originals);
+    $("summary").textContent = `${r.where === "on_device" ? "Written on this device by Gemini Nano (nothing sent)" : `Written in the cloud by ${r.model}`} · ${(r.ms / 1000).toFixed(1)} s · route: ${r.route}
+
+${r.text}`;
+  } catch (e) { $("summary").textContent = (e as Error).message; }
 };
 
 refreshGate();
@@ -236,9 +240,8 @@ refreshMeter();
 if (firebaseConfigured()) {
   cloudConfig().then((m) => {
     $("model-info").textContent = m.enabled
-      ? `Cloud step: on · model ${m.primary} (fallback, tried once on a server error: ${m.fallback}) · from Firebase Remote Config.`
-      : "Cloud step: off (Remote Config cloud_enabled is false, or the config could not be loaded). Nothing can be sent.";
-    if (!m.enabled) ($("summarise") as HTMLButtonElement).title = "The cloud step is switched off";
+      ? `Runs on this device with Gemini Nano when it is ready; otherwise in the cloud with ${m.primary} (fallback, tried once on a server error: ${m.fallback}). Settings from Firebase Remote Config.`
+      : "Cloud is switched off in Remote Config: the summary can only run on this device, with Gemini Nano.";
   });
 }
 if (params.has("sample")) $("load-sample").click();

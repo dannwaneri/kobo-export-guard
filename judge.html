@@ -25,8 +25,8 @@
       <p>This removes <code>LanguageModel</code> before the page runs, like Firefox, Safari or a phone. In that case the Firebase AI Logic SDK (13.4.0) sends even <code>ONLY_ON_DEVICE</code> calls to the cloud. This app checks first and refuses: the scan button is disabled, the code-only scan still works, and the counter stays at <b>0</b>.</p>
     </section>
     <section class="panel">
-      <h2><span class="n">3</span> The one cloud call</h2>
-      <p>Step 6 sends only the <b>cleaned</b> comments to Gemini in the cloud for a narrative summary, after consent and a final code check that no phone, email or masked name remains. The counter then shows one request (two if the first model is busy and the fallback model is tried once).</p>
+      <h2><span class="n">3</span> The hybrid call: the summary</h2>
+      <p>Step 6 summarises only the <b>cleaned</b> comments, after consent and a final code check that no phone, email or masked name remains. It uses <code>PREFER_ON_DEVICE</code>: on this laptop Gemini Nano writes it (the counter stays at 0, about a minute); a browser without Nano, or an export too long for the device (over 30,000 characters), uses Gemini in the cloud. The page shows where it ran and why. Raw comments never take this path.</p>
     </section>
     <section class="panel">
       <h2>Why this exists</h2>

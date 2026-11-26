@@ -36,7 +36,7 @@ In his words (quoted with his permission):
 |---|---|---|
 | Names/places in raw comments | Gemini Nano, `InferenceMode.ONLY_ON_DEVICE`, **behind our own gate** | Raw survey text must not leave the device |
 | Phones, emails, coordinates, metadata, GPS, small-group check | Code | Deterministic and testable; no model needed |
-| Narrative summary | Gemini in the cloud (`ONLY_IN_CLOUD`; model from **Remote Config**, default `gemini-3.5-flash-lite`, one fallback `gemini-3.5-flash` on a server error) | Long output; the input is already cleaned |
+| Summary of the **cleaned** comments | `PREFER_ON_DEVICE`: Gemini Nano when it is ready and the text fits (≤ 30,000 characters, from Nano's measured 9,216-unit context window); otherwise Gemini in the cloud (model from Remote Config, one fallback on a server error). With the cloud switched off: device only. | The text is already cleaned, so falling back is safe. Raw comments never fall back. |
 
 ### The gate (why ONLY_ON_DEVICE is not enough)
 In firebase 13.4.0, if the browser has **no** `LanguageModel` (Firefox, Safari, Chrome on phones, older Chrome), the SDK makes no Chrome adapter and sends the call to the cloud **whatever the mode**. `initializeDeviceModel()` also returns without error in that case. So before every on-device call, this app checks `LanguageModel.availability()` itself and refuses unless the result is `available` (`src/ai/gate.ts`). After the call it also checks `inferenceSource === ON_DEVICE`.
@@ -44,6 +44,15 @@ In firebase 13.4.0, if the browser has **no** `LanguageModel` (Firefox, Safari, 
 Try it: `/?sample=1&nonano` removes `LanguageModel` before the page runs. The Nano scan is disabled, the code-only scan still works, and the request counter stays at 0.
 
 The cloud summary is also refused unless every comment was checked by Nano, because names are only found on the device.
+
+## Measured: the hybrid summary
+| Case | Where it ran | Requests | Time |
+|---|---|---|---|
+| 37 cleaned comments, Chrome with Nano | on the device | 0 | 63–83 s (3 runs) |
+| No `LanguageModel` (`?nonano`) | `gemini-3.5-flash-lite` in the cloud | 1 | 5.5 s |
+| 32,788 characters, Chrome with Nano | cloud (too long for the device) | 1 | 3.1 s |
+
+The first Nano summary invented a count ("reported 12 times"; the true number was 4), so the prompt now forbids numbers; later runs had none.
 
 ## Firebase products used
 - **Firebase AI Logic**: hybrid inference (`ONLY_ON_DEVICE` behind our gate for raw text, `ONLY_IN_CLOUD` for the cleaned summary).
