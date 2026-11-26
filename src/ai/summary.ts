@@ -1,8 +1,8 @@
 // Optional cloud step: a narrative summary of CLEANED comments only — the safe stand-in for pasting rows into ChatGPT.
 import { getGenerativeModel, InferenceMode } from "firebase/ai";
-import { getAi } from "./firebase";
+import { getAi, ensureSignedIn } from "./firebase";
 import { setPurpose } from "./meter";
-import { cloudModels } from "./config";
+import { cloudConfig } from "./config";
 import { cloudSafe } from "../core/pipeline";
 
 // Model names come from Remote Config (defaults in config.ts). The fallback is tried once, only when the
@@ -30,7 +30,10 @@ async function ask(model: string, payload: string): Promise<string> {
 export async function cloudSummary(payload: string, maskedOriginals: string[]): Promise<string> {
   const check = cloudSafe(payload, maskedOriginals);
   if (!check.ok) throw new Error(`Not sent: the text still contains ${check.problems.join(", ")}.`);
-  const models = await cloudModels();
+  const models = await cloudConfig();
+  if (!models.enabled) throw new Error("Not sent: the cloud step is switched off in Remote Config (cloud_enabled), or the config could not be loaded.");
+  try { await ensureSignedIn(); }
+  catch (e) { throw new Error(`Not sent: anonymous sign-in failed (${(e as Error).message}).`); }
   try {
     return await ask(models.primary, payload);
   } catch (e) {

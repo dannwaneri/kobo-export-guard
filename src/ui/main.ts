@@ -17,7 +17,7 @@ import { deviceState, DeviceRefused, GATE_COPY, type GateState } from "../ai/gat
 import { deviceScan, codeScan, prepareDevice, propagate, type ScanResult } from "../ai/scan";
 import { buildSummaryPayload, cloudSummary } from "../ai/summary";
 import { firebaseConfigured } from "../ai/firebase";
-import { cloudModels } from "../ai/config";
+import { cloudConfig } from "../ai/config";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const show = (id: string) => $(id).classList.remove("hidden");
@@ -234,8 +234,11 @@ $("summarise").onclick = async () => {
 refreshGate();
 refreshMeter();
 if (firebaseConfigured()) {
-  cloudModels().then((m) => {
-    $("model-info").textContent = `Cloud model: ${m.primary} (fallback, tried once on a server error: ${m.fallback}) · from ${m.source === "remote" ? "Firebase Remote Config" : "built-in defaults"}.`;
+  cloudConfig().then((m) => {
+    $("model-info").textContent = m.enabled
+      ? `Cloud step: on · model ${m.primary} (fallback, tried once on a server error: ${m.fallback}) · from Firebase Remote Config.`
+      : "Cloud step: off (Remote Config cloud_enabled is false, or the config could not be loaded). Nothing can be sent.";
+    if (!m.enabled) ($("summarise") as HTMLButtonElement).title = "The cloud step is switched off";
   });
 }
 if (params.has("sample")) $("load-sample").click();

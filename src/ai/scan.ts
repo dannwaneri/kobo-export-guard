@@ -1,6 +1,7 @@
 // Free-text scan: phones/coordinates/emails by code, names/places/sensitive tags by Gemini Nano on the device.
 import { getGenerativeModel, InferenceMode, InferenceSource, type GenerativeModel } from "firebase/ai";
-import { getAi, CLOUD_MODEL } from "./firebase";
+import { getAi } from "./firebase";
+import { DEFAULTS } from "./config";
 import { assertDeviceReady, TEXT_OPTS } from "./gate";
 import { findPhones, findCoordinates, findEmails, findContextNames, cleanModelNames, cleanModelPlaces, locate, mask, type Span } from "../core/text";
 
@@ -35,7 +36,7 @@ function deviceModel(): GenerativeModel {
   return (model ??= getGenerativeModel(getAi(), {
     mode: InferenceMode.ONLY_ON_DEVICE,
     onDeviceParams: { createOptions: TEXT_OPTS, promptOptions: { responseConstraint: SCHEMA } },
-    inCloudParams: { model: CLOUD_MODEL },
+    inCloudParams: { model: DEFAULTS.cloud_model }, // never reached: the gate refuses before any call without the device model
   }));
 }
 
