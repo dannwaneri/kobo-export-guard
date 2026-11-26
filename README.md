@@ -47,7 +47,7 @@ The cloud summary is also refused unless every comment was checked by Nano, beca
 
 ## Firebase products used
 - **Firebase AI Logic**: hybrid inference (`ONLY_ON_DEVICE` behind our gate for raw text, `ONLY_IN_CLOUD` for the cleaned summary).
-- **App Check**: reCAPTCHA Enterprise (Fraud Defense), enforced on AI Logic; calls without a token get 401. AI Logic uses **limited-use tokens** (a fresh token per cloud request).
+- **App Check**: reCAPTCHA Enterprise (Fraud Defense), enforced on AI Logic; calls without a token get 401. AI Logic uses **limited-use tokens** (a fresh token per cloud request) with **replay protection enforced**: tested with two summaries in a row, each passed with its own token (about 6.4 s each).
 - **Remote Config**: `cloud_enabled` kill switch (off unless the live config says on; tested: off → the summary is refused and nothing is sent), plus the cloud model and fallback names (`remoteconfig.template.json`).
 - **Authentication**: anonymous sign-in before any cloud call, so AI Logic sees a real app user; the person needs no account.
 - **Hosting**: the live site and `/judge`.
