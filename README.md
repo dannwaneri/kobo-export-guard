@@ -50,7 +50,7 @@ The cloud summary is also refused unless every comment was checked by Nano, beca
 - **App Check**: reCAPTCHA Enterprise (Fraud Defense), enforced on AI Logic; calls without a token get 401. AI Logic uses **limited-use tokens** (a fresh token per cloud request) with **replay protection enforced**: tested with two summaries in a row, each passed with its own token (about 6.4 s each).
 - **Remote Config**: `cloud_enabled` kill switch (off unless the live config says on; tested: off → the summary is refused and nothing is sent), plus the cloud model and fallback names (`remoteconfig.template.json`).
 - **AI monitoring** (AI Logic): latency, errors and token use for the cloud step. By default it stores the actual prompts and responses in Cloud Logging; we added a Cloud Logging exclusion (`resource.type="firebasevertexai.googleapis.com/Model"` on the `_Default` sink) so they are not stored. On-device scans make no request, so there is nothing to log.
-- **Authentication**: anonymous sign-in before any cloud call, so AI Logic sees a real app user; the person needs no account.
+- **Authentication**: anonymous sign-in before any cloud call, with AI Logic's **authenticated-users mode enforced** (tested: a cloud call without sign-in gets 401; the app's summary, signed in anonymously, passes). The person needs no account. Gotcha we hit: Auth must be initialised *before* `getAI()`, because the AI service looks up Auth once when it is created; created later, no token is sent and every call gets 401 (`src/ai/firebase.ts`).
 - **Hosting**: the live site and `/judge`.
 
 ## Measured on the build laptop (i5-1135G7, Chrome 157, Nano v3)

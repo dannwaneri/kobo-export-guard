@@ -38,6 +38,10 @@ export function getAi(): AI {
   if (env.VITE_RECAPTCHA_SITE_KEY) {
     initializeAppCheck(app, { provider: new ReCaptchaEnterpriseProvider(env.VITE_RECAPTCHA_SITE_KEY), isTokenAutoRefreshEnabled: true });
   }
+  // Auth must exist BEFORE getAI(): the AI service looks up Auth once, at construction
+  // (index.esm.js AIService: authProvider.getImmediate({ optional: true })). Created later, no
+  // Authorization header is sent and authenticated-users mode answers 401 (seen 2026-11-26).
+  getAuth(app);
   ai = getAI(app, { backend: new GoogleAIBackend(), useLimitedUseAppCheckTokens: true });
   return ai;
 }
