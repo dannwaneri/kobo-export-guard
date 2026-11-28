@@ -4,6 +4,8 @@
 
 Clean a Kobo/ODK survey export before you share it. The file stays in your browser. Names and places in free-text comments are found by **Gemini Nano on your own device**. Phone numbers, metadata and GPS are handled by plain code. The only cloud call is an optional summary of the **already cleaned** comments.
 
+**Demo video (2:26):** https://youtu.be/I1m7qC1HoUI · **Live app:** https://buildhybridai-daniel.web.app
+
 **Judges: open `/judge.html`** (3 minutes, no account, synthetic data).
 
 ## Screenshots
