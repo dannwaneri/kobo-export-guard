@@ -55,7 +55,7 @@ In his words (quoted with his permission):
 | Summary of the **cleaned** comments | `PREFER_ON_DEVICE`: Gemini Nano when it is ready and the text fits (≤ 30,000 characters, from Nano's measured 9,216-unit context window); otherwise Gemini in the cloud (model from Remote Config, one fallback on a server error). With the cloud switched off: device only. | The text is already cleaned, so falling back is safe. Raw comments never fall back. |
 
 ### The gate (why ONLY_ON_DEVICE is not enough)
-In firebase 13.4.0, if the browser has **no** `LanguageModel` (Firefox, Safari, Chrome on phones, older Chrome), the SDK makes no Chrome adapter and sends the call to the cloud **whatever the mode**. `initializeDeviceModel()` also returns without error in that case. So before every on-device call, this app checks `LanguageModel.availability()` itself and refuses unless the result is `available` (`src/ai/gate.ts`). After the call it also checks `inferenceSource === ON_DEVICE`.
+In firebase 13.4.0, if the browser has **no** `LanguageModel` (Firefox, Safari, Chrome on phones, older Chrome), the SDK makes no Chrome adapter and sends the call to the cloud **whatever the mode** (reported as [firebase-js-sdk#10635](https://github.com/firebase/firebase-js-sdk/issues/10635)). `initializeDeviceModel()` also returns without error in that case. So before every on-device call, this app checks `LanguageModel.availability()` itself and refuses unless the result is `available` (`src/ai/gate.ts`). After the call it also checks `inferenceSource === ON_DEVICE`.
 
 Try it: `/?sample=1&nonano` removes `LanguageModel` before the page runs. The Nano scan is disabled, the code-only scan still works, and the request counter stays at 0.
 
